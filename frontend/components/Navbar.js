@@ -1,4 +1,3 @@
-// components/Navbar.js
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -8,11 +7,10 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-md relative z-50">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold text-orange-500">SouSmile</Link>
+        <Link href="/" className="text-xl font-bold text-orange-500">Neuro Connect</Link>
         <div className="flex items-center space-x-4">
-          <Link href="/aparelho-transparente">Aparelho Transparente</Link>
           <Link href="/duvidas">Dúvidas</Link>
-          <Link href="/contato">Contato</Link>
+          <Link href="/sobre">Sobre nós</Link>
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
