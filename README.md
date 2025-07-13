@@ -11,6 +11,8 @@ Portal web Neuro Connect
 ```bash
     cd frontend     
     npm install
+    npx prisma db push
+    npm run seed
     npm run dev
 ```
 ---

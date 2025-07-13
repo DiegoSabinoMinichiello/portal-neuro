@@ -21,18 +21,18 @@ export default function Navbar() {
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg">
                 <Link
-                  href="/login-usuario"
+                  href="/cadastro"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  Para Usuários
+                  Quero me cadastrar
                 </Link>
                 <Link
-                  href="/login-empresa"
+                  href="/login"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  Para Empresas
+                  Já tenho conta
                 </Link>
               </div>
             )}
