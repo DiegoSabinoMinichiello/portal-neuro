@@ -6,42 +6,34 @@ export default async function handler(req, res) {
 
   const { email, senha, nome, tipo, cnpj } = req.body;
 
+  if (!email || !senha || !nome || !tipo) {
+    return res.status(400).json({ error: 'Campos obrigatórios estão faltando.' });
+  }
+
+  if (tipo === 'empresa' && !cnpj) {
+    return res.status(400).json({ error: 'CNPJ é obrigatório para empresa.' });
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(senha, 10);
 
     if (tipo === 'admin') {
       const admin = await prisma.admin.create({
-        data: {
-          email,
-          senha: hashedPassword,
-          nome,
-          tipo,
-        },
+        data: { email, senha: hashedPassword, nome, tipo },
       });
       return res.status(201).json({ success: true, id: admin.id });
     }
 
     if (tipo === 'consultor') {
       const consultor = await prisma.consultor.create({
-        data: {
-          email,
-          senha: hashedPassword,
-          nome,
-          tipo,
-        },
+        data: { email, senha: hashedPassword, nome, tipo },
       });
       return res.status(201).json({ success: true, id: consultor.id });
     }
 
     if (tipo === 'empresa') {
       const empresa = await prisma.empresa.create({
-        data: {
-          email,
-          senha: hashedPassword,
-          nome,
-          tipo,
-          cnpj,
-        },
+        data: { email, senha: hashedPassword, nome, tipo, cnpj },
       });
       return res.status(201).json({ success: true, id: empresa.id });
     }

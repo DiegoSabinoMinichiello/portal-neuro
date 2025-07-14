@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Cadastro from './cadastro.js'; // ajuste o caminho
+import { useRouter } from 'next/router';
 
 export default function DashboardAdmin() {
+  const router = useRouter();
   const [usuarios, setUsuarios] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [usuarioParaEditar, setUsuarioParaEditar] = useState(null);
@@ -97,14 +99,17 @@ export default function DashboardAdmin() {
               </tbody>
             </table>
 
-            <div>
-              <h2 className="text-xl font-semibold mb-4">{usuarioParaEditar ? 'Editar Usuário' : 'Adicionar Novo Usuário'}</h2>
-              <Cadastro
-                usuarioParaEditar={usuarioParaEditar}
-                tipoInicial={tipoFiltro}
-                onSucesso={() => fetchUsuarios()}
-              />
+            {!usuarioParaEditar && (
+            <div className="mt-6">
+                <button
+                onClick={() => router.push('/cadastro?admin=1')}
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-accent transition"
+                >
+                Adicionar Novo Usuário
+                </button>
             </div>
+            )}
+
           </>
         )}
       </div>

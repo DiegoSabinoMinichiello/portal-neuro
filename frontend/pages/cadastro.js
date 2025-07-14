@@ -1,25 +1,61 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useRouter } from 'next/router';
 
 export default function Cadastro() {
-  const [userType, setUserType] = useState('consultor'); // 'consultor' or 'empresa'
+  const router = useRouter();
+  const queryAdmin = router.query?.admin;
+  const isAdmin = queryAdmin === '1' || queryAdmin === true;
+
+  const [userType, setUserType] = useState('consultor');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [cnpj, setCnpj] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Lógica de validação e envio do formulário
+
     if (password !== confirmPassword) {
       alert('As senhas não coincidem!');
       return;
     }
-    console.log({ userType, name, email, password, cnpj });
-    alert('Cadastro realizado com sucesso! (Verifique o console para os dados)');
-    // Aqui você faria a chamada para a API de cadastro
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          senha: password,
+          nome: name,
+          tipo: isAdmin ? 'admin' : userType,
+          cnpj: userType === 'empresa' ? cnpj : null,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || 'Erro ao cadastrar. Tente novamente.');
+        return;
+      }
+
+      alert('Cadastro realizado com sucesso!');
+
+      if (isAdmin) {
+        router.push('/dashboard-admin');
+      } else {
+        router.push('/login-usuario');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao enviar os dados. Verifique sua conexão.');
+    }
   };
 
   return (
@@ -37,20 +73,22 @@ export default function Cadastro() {
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm -space-y-px">
-              <div>
-                <label htmlFor="user-type" className="sr-only">Tipo de Usuário</label>
-                <select
-                  id="user-type"
-                  name="user-type"
-                  required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                  value={userType}
-                  onChange={(e) => setUserType(e.target.value)}
-                >
-                  <option value="consultor">Consultor</option>
-                  <option value="empresa">Empresa</option>
-                </select>
-              </div>
+              {!isAdmin && (
+                <div>
+                  <label htmlFor="user-type" className="sr-only">Tipo de Usuário</label>
+                  <select
+                    id="user-type"
+                    name="user-type"
+                    required
+                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                    value={userType}
+                    onChange={(e) => setUserType(e.target.value)}
+                  >
+                    <option value="consultor">Consultor</option>
+                    <option value="empresa">Empresa</option>
+                  </select>
+                </div>
+              )}
               <div>
                 <label htmlFor="name" className="sr-only">Nome</label>
                 <input
@@ -107,7 +145,7 @@ export default function Cadastro() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
-              {userType === 'empresa' && (
+              {userType === 'empresa' && !isAdmin && (
                 <div>
                   <label htmlFor="cnpj" className="sr-only">CNPJ</label>
                   <input
