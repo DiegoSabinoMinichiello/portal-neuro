@@ -1,43 +1,112 @@
-export default function DashboardEmpresa() {
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import Cadastro from './cadastro.js'; // ajuste o caminho
+
+export default function DashboardAdmin() {
+  const [usuarios, setUsuarios] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [usuarioParaEditar, setUsuarioParaEditar] = useState(null);
+  const [tipoFiltro, setTipoFiltro] = useState('admin');
+
+  // Busca usuários do tipo selecionado
+  const fetchUsuarios = async () => {
+    setCarregando(true);
+    try {
+      const res = await axios.get(`/api/admin/usuarios/${tipoFiltro}`);
+      setUsuarios(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsuarios();
+    setUsuarioParaEditar(null);
+  }, [tipoFiltro]);
+
+  // Excluir usuário
+  const excluirUsuario = async (id) => {
+    if (!confirm('Confirma exclusão?')) return;
+
+    try {
+      await axios.delete(`/api/admin/usuarios/${tipoFiltro}/${id}`);
+      fetchUsuarios();
+    } catch (err) {
+      alert('Erro ao excluir');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-orange-500 mb-6">Dashboard da Empresa</h1>
+        <h1 className="text-3xl font-bold text-primary mb-6">Dashboard Admin - Usuários</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-4 shadow rounded-lg">
-            <h2 className="text-xl font-semibold mb-2">Clientes Ativos</h2>
-            <p className="text-2xl font-bold text-gray-700">128</p>
-          </div>
-
-          <div className="bg-white p-4 shadow rounded-lg">
-            <h2 className="text-xl font-semibold mb-2">Trabalhos em Andamento</h2>
-            <p className="text-2xl font-bold text-gray-700">87</p>
-          </div>
-
-          <div className="bg-white p-4 shadow rounded-lg">
-            <h2 className="text-xl font-semibold mb-2">Novos Leads</h2>
-            <p className="text-2xl font-bold text-gray-700">24</p>
-          </div>
+        <div className="mb-4">
+          <label className="mr-2 font-semibold">Filtrar por tipo:</label>
+          <select
+            value={tipoFiltro}
+            onChange={(e) => setTipoFiltro(e.target.value)}
+            className="border rounded px-3 py-1"
+          >
+            <option value="admin">Admin</option>
+            <option value="consultor">Consultor</option>
+            <option value="empresa">Empresa</option>
+          </select>
         </div>
 
-        <div className="bg-white p-6 shadow rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">Últimos Cadastros</h2>
-          <ul className="divide-y divide-gray-200">
-            <li className="py-2 flex justify-between">
-              <span>Joana Martins</span>
-              <span className="text-sm text-gray-500">Há 2 horas</span>
-            </li>
-            <li className="py-2 flex justify-between">
-              <span>Pedro Almeida</span>
-              <span className="text-sm text-gray-500">Há 5 horas</span>
-            </li>
-            <li className="py-2 flex justify-between">
-              <span>Ana Souza</span>
-              <span className="text-sm text-gray-500">Ontem</span>
-            </li>
-          </ul>
-        </div>
+        {carregando ? (
+          <p>Carregando usuários...</p>
+        ) : (
+          <>
+            <table className="w-full mb-6 border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-secondary text-white">
+                  <th className="border border-gray-300 p-2">Nome</th>
+                  <th className="border border-gray-300 p-2">Email</th>
+                  <th className="border border-gray-300 p-2">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {usuarios.length === 0 && (
+                  <tr>
+                    <td colSpan="3" className="text-center p-4">Nenhum usuário encontrado.</td>
+                  </tr>
+                )}
+                {usuarios.map((u) => (
+                  <tr key={u.id} className="hover:bg-gray-200">
+                    <td className="border border-gray-300 p-2">{u.nome}</td>
+                    <td className="border border-gray-300 p-2">{u.email}</td>
+                    <td className="border border-gray-300 p-2 space-x-2">
+                      <button
+                        onClick={() => setUsuarioParaEditar(u)}
+                        className="bg-accent text-white px-3 py-1 rounded hover:bg-primary transition"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => excluirUsuario(u.id)}
+                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                      >
+                        Excluir
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div>
+              <h2 className="text-xl font-semibold mb-4">{usuarioParaEditar ? 'Editar Usuário' : 'Adicionar Novo Usuário'}</h2>
+              <Cadastro
+                usuarioParaEditar={usuarioParaEditar}
+                tipoInicial={tipoFiltro}
+                onSucesso={() => fetchUsuarios()}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
