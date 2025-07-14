@@ -1,9 +1,18 @@
 export default function Hero() {
   return (
-    <section className="bg-orange-100 py-20 text-center">
-      <h1 className="text-4xl font-bold text-gray-800 mb-4">Seu novo sorriso começa aqui</h1>
-      <p className="text-lg text-gray-700 mb-6">Tecnologia, conforto e preço justo</p>
-      <button className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600">Agendar Avaliação</button>
+    <section className="bg-white py-20">
+      <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+        <div className="text-left">
+          <h1 className="text-3xl md:text-4xl font-bold text-primary mb-6 leading-tight">Neuro Connect: Consultorias com neurodivergentes para desenvolvimento de empresas.</h1>
+            <div className="text-lg text-primary mb-8"> 
+            <p>Realizando o sonho da vida profissional dos neurodivergentes.</p>
+          </div>
+          <button className="bg-primary text-white font-bold px-8 py-3 rounded-md hover:bg-secondary transition-colors">Cadastre-se </button>
+         </div>
+        <div>
+          <img src="/images/consultoria-02.png" alt="Ilustração da plataforma" className="rounded-lg shadow-lg"/>
+        </div>
+      </div>
     </section>
   )
 }
