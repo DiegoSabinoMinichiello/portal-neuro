@@ -30,7 +30,7 @@ export default function Home() {
 
       <section id="beneficios-diversidade" className="py-16 bg-white">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-primary mb-12">Neurodivergentes no mercado de trabalho:</h2>
+          <h2 className="text-4xl font-bold text-primary mb-12">Neurodivergentes no Mercado de Trabalho:</h2>
           <p className="text-xl text-primary mb-6">IBGE (2019): 85% das pessoas autistas estão desempregadas. Em nível mundial esse número é de 80% conforme a OMS, 2020.</p>
           <p className="text-xl text-primary mb-6">Consultoria McKinsey (USA): Neurodivergentes em suas equipes têm 33% mais prospensão à rentabilidade.</p>
         </div>
@@ -43,7 +43,7 @@ export default function Home() {
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <img src="/images/foto-perfil-exemplo-02.png" alt="Mônica Ferri" className="mx-auto mb-6 rounded-full h-32 w-32 object-cover"/>
               <h3 className="text-2xl font-bold mb-2 text-primary">Mônica Ferri</h3>
-              <p className="text-primary">CTO e Pedagoga pela UFFS</p>
+              <p className="text-primary">CEO e Pedagoga pela UFFS</p>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <img src="/images/foto-perfil-exemplo-02.png" alt="Gabriela Ribeiro" className="mx-auto mb-6 rounded-full h-32 w-32 object-cover"/>
