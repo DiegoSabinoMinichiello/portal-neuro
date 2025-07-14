@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useRouter } from 'next/router';
@@ -6,11 +6,15 @@ import { useRouter } from 'next/router';
 export default function Cadastro() {
   const router = useRouter();
   const queryAdmin = router.query?.admin;
-  const isAdmin = queryAdmin === '1' || queryAdmin === true;
+  const queryTipo = router.query?.tipo;
 
-  const [userType, setUserType] = useState('consultor');
+  const isAdmin = queryAdmin === '1' || queryAdmin === true;
+  const [userType, setUserType] = useState(queryTipo || 'consultor');
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [tel, setTel] = useState('');
+  const [desc, setDesc] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [cnpj, setCnpj] = useState('');
@@ -33,7 +37,9 @@ export default function Cadastro() {
           email,
           senha: password,
           nome: name,
-          tipo: isAdmin ? 'admin' : userType,
+          tipo: isAdmin ? userType : userType,
+          tel,
+          desc,
           cnpj: userType === 'empresa' ? cnpj : null,
         }),
       });
@@ -73,7 +79,8 @@ export default function Cadastro() {
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm -space-y-px">
-              {!isAdmin && (
+              {/* Se não for admin e não tiver tipo fixado por query, exibe o seletor */}
+              {!isAdmin && !queryTipo && (
                 <div>
                   <label htmlFor="user-type" className="sr-only">Tipo de Usuário</label>
                   <select
@@ -118,6 +125,32 @@ export default function Cadastro() {
                 />
               </div>
               <div>
+                <label htmlFor="tel" className="sr-only">Telefone</label>
+                <input
+                  id="tel"
+                  name="tel"
+                  type="text"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                  placeholder="Telefone"
+                  value={tel}
+                  onChange={(e) => setTel(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="desc" className="sr-only">Descrição</label>
+                <input
+                  id="desc"
+                  name="desc"
+                  type="text"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                  placeholder="Descreva qual tipo de consultoria você busca/oferece"
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                />
+              </div>
+              <div>
                 <label htmlFor="password" className="sr-only">Senha</label>
                 <input
                   id="password"
@@ -145,7 +178,7 @@ export default function Cadastro() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
-              {userType === 'empresa' && !isAdmin && (
+              {userType === 'empresa' && (
                 <div>
                   <label htmlFor="cnpj" className="sr-only">CNPJ</label>
                   <input

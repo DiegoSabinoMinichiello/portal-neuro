@@ -12,13 +12,13 @@ export default function DashboardConsultor() {
       try {
         const res = await axios.get('/api/auth/me');
         if (res.data.user.tipo !== 'consultor') {
-          router.push('/login');
+          router.push('/login-usuario');
         } else {
           setConsultor(res.data.user);
         }
       } catch (err) {
         setError('Erro ao carregar dados');
-        router.push('/login');
+        router.push('/login-usuario');
       }
     };
 

@@ -9,13 +9,13 @@ export async function middleware(req) {
 
   if (!token) {
     if (pathname.startsWith('/dashboard-admin')) {
-      return NextResponse.redirect(`${origin}/login`);
+      return NextResponse.redirect(`${origin}/login-usuario`);
     }
     if (pathname.startsWith('/dashboard-consultor')) {
-      return NextResponse.redirect(`${origin}/login`);
+      return NextResponse.redirect(`${origin}/login-usuario`);
     }
     if (pathname.startsWith('/dashboard-empresa')) {
-      return NextResponse.redirect(`${origin}/login`);
+      return NextResponse.redirect(`${origin}/login-usuario`);
     }
 
     return NextResponse.next();
@@ -25,21 +25,21 @@ export async function middleware(req) {
     const { payload } = await jwtVerify(token, JWT_SECRET);
 
     if (pathname.startsWith('/dashboard-admin') && payload.tipo !== 'admin') {
-      return NextResponse.redirect(`${origin}/login`);
+      return NextResponse.redirect(`${origin}/login-usuario`);
     }
 
     if (pathname.startsWith('/dashboard-consultor') && payload.tipo !== 'consultor') {
-      return NextResponse.redirect(`${origin}/login`);
+      return NextResponse.redirect(`${origin}/login-usuario`);
     }
 
     if (pathname.startsWith('/dashboard-empresa') && payload.tipo !== 'empresa') {
-      return NextResponse.redirect(`${origin}/login`);
+      return NextResponse.redirect(`${origin}/login-usuario`);
     }
 
     return NextResponse.next();
   } catch (err) {
     console.error('Token inválido:', err);
-    return NextResponse.redirect(`${origin}/login`);
+    return NextResponse.redirect(`${origin}/login-usuario`);
   }
 }
 

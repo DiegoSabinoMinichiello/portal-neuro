@@ -4,43 +4,40 @@ import bcrypt from 'bcrypt';
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { email, senha, nome, tipo, cnpj } = req.body;
+  const { email, senha, nome, tipo, tel = '', desc = '', cnpj = null } = req.body;
 
   if (!email || !senha || !nome || !tipo) {
-    return res.status(400).json({ error: 'Campos obrigatórios estão faltando.' });
-  }
-
-  if (tipo === 'empresa' && !cnpj) {
-    return res.status(400).json({ error: 'CNPJ é obrigatório para empresa.' });
+    return res.status(400).json({ error: 'Dados obrigatórios faltando.' });
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(senha, 10);
+    const hashedPassword = await bcrypt.hash(senha, 10); // <--- HASH AQUI
+    let novoUsuario;
 
     if (tipo === 'admin') {
-      const admin = await prisma.admin.create({
-        data: { email, senha: hashedPassword, nome, tipo },
+      novoUsuario = await prisma.admin.create({
+        data: { email, senha: hashedPassword, nome, tel, desc, tipo },
       });
-      return res.status(201).json({ success: true, id: admin.id });
+    } else if (tipo === 'consultor') {
+      novoUsuario = await prisma.consultor.create({
+        data: { email, senha: hashedPassword, nome, tel, desc, tipo },
+      });
+    } else if (tipo === 'empresa') {
+      novoUsuario = await prisma.empresa.create({
+        data: { email, senha: hashedPassword, nome, tel, desc, tipo, cnpj },
+      });
+    } else {
+      return res.status(400).json({ error: 'Tipo de usuário inválido.' });
     }
 
-    if (tipo === 'consultor') {
-      const consultor = await prisma.consultor.create({
-        data: { email, senha: hashedPassword, nome, tipo },
-      });
-      return res.status(201).json({ success: true, id: consultor.id });
-    }
-
-    if (tipo === 'empresa') {
-      const empresa = await prisma.empresa.create({
-        data: { email, senha: hashedPassword, nome, tipo, cnpj },
-      });
-      return res.status(201).json({ success: true, id: empresa.id });
-    }
-
-    return res.status(400).json({ error: 'Tipo inválido' });
+    return res.status(201).json(novoUsuario);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao registrar' });
+    console.error('Erro ao registrar usuário:', err);
+
+    if (err.code === 'P2002') {
+      return res.status(400).json({ error: 'Email já cadastrado.' });
+    }
+
+    return res.status(500).json({ error: 'Erro no servidor ao registrar.' });
   }
 }

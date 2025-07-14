@@ -12,13 +12,13 @@ export default function DashboardEmpresa() {
       try {
         const res = await axios.get('/api/auth/me');
         if (res.data.user.tipo !== 'empresa') {
-          router.push('/login');
+          router.push('/login-usuario');
         } else {
           setEmpresa(res.data.user);
         }
       } catch (err) {
         setError('Erro ao carregar dados');
-        router.push('/login');
+        router.push('/login-usuario');
       }
     };
 
