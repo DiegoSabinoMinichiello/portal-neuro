@@ -13,6 +13,8 @@ async function main() {
       email: 'admin@exemplo.com',
       senha: hashedPassword,
       tipo: 'admin',
+      tel: '(49)99999-9999',
+      desc: 'Usuario administrador',
     },
   });
 
@@ -23,6 +25,8 @@ async function main() {
       email: 'consultor@exemplo.com',
       senha: hashedPassword,
       tipo: 'consultor',
+      tel: '(49)99999-9999',
+      desc: 'Ofereço consultoria de Marketing',
     },
   });
 
@@ -33,6 +37,8 @@ async function main() {
       email: 'empresa@exemplo.com',
       senha: hashedPassword,
       tipo: 'empresa',
+      tel: '(49)99999-9999',
+      desc: 'Busco consultoria de Marketing',
       cnpj: '12.345.678/0001-90',
     },
   });

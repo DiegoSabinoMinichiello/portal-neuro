@@ -12,6 +12,8 @@ model Admin {
   email    String  @unique
   senha    String
   nome     String
+  tel      String
+  desc     String
   tipo     String
   createdAt DateTime @default(now())
 }
@@ -21,6 +23,8 @@ model Consultor {
   email    String  @unique
   senha    String
   nome     String
+  tel      String
+  desc     String
   tipo     String
   createdAt DateTime @default(now())
 }
@@ -31,6 +35,8 @@ model Empresa {
   senha    String
   nome     String
   tipo     String
+  tel      String
+  desc     String
   cnpj     String?
   createdAt DateTime @default(now())
 }
