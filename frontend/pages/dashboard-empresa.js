@@ -25,11 +25,25 @@ export default function DashboardEmpresa() {
     fetchEmpresa();
   }, []);
 
+    const handleLogout = async () => {
+    try {
+      await axios.post('/api/auth/logout');
+      router.push('/login-usuario');
+    } catch (err) {
+      console.error('Erro ao fazer logout:', err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
-      <div className="bg-white p-6 rounded shadow max-w-2xl w-full">
+      <div className="bg-white p-6 rounded shadow max-w-2xl w-full relative">
+        <button
+          onClick={handleLogout}
+          className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+        >
+          Sair
+        </button>
         <h1 className="text-3xl font-bold text-orange-500 mb-4">Dashboard do Empresa</h1>
-
         {error && <p className="text-red-500">{error}</p>}
 
         {empresa ? (

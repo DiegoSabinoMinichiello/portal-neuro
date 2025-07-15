@@ -19,12 +19,49 @@ export default function Cadastro() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [cnpj, setCnpj] = useState('');
 
+  //função para formatar telefone (10 ou 11 dígitos)
+  function formatPhone(value) {
+    const cleaned = value.replace(/\D/g, '');
+    if (cleaned.length <= 10) {
+      return cleaned.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').trim();
+    } else {
+      return cleaned.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').trim();
+    }
+  }
+
+  //função para formatar CNPJ
+  function formatCnpj(value) {
+    const cleaned = value.replace(/\D/g, '');
+    return cleaned
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2')
+      .slice(0, 18);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    //Limpa máscara para validações e envio
+    const telNumbers = tel.replace(/\D/g, '');
+    const cnpjNumbers = cnpj.replace(/\D/g, '');
 
     if (password !== confirmPassword) {
       alert('As senhas não coincidem!');
       return;
+    }
+
+    if (telNumbers.length !== 10 && telNumbers.length !== 11) {
+      alert('Telefone deve conter 10 ou 11 dígitos numéricos.');
+      return;
+    }
+
+    if (userType === 'empresa') {
+      if (cnpjNumbers.length !== 14) {
+        alert('CNPJ deve conter exatamente 14 números.');
+        return;
+      }
     }
 
     try {
@@ -38,9 +75,9 @@ export default function Cadastro() {
           senha: password,
           nome: name,
           tipo: isAdmin ? userType : userType,
-          tel,
+          tel: telNumbers,
           desc,
-          cnpj: userType === 'empresa' ? cnpj : null,
+          cnpj: userType === 'empresa' ? cnpjNumbers : null,
         }),
       });
 
@@ -79,7 +116,6 @@ export default function Cadastro() {
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm -space-y-px">
-              {/* Se não for admin e não tiver tipo fixado por query, exibe o seletor */}
               {!isAdmin && !queryTipo && (
                 <div>
                   <label htmlFor="user-type" className="sr-only">Tipo de Usuário</label>
@@ -134,7 +170,10 @@ export default function Cadastro() {
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                   placeholder="Telefone"
                   value={tel}
-                  onChange={(e) => setTel(e.target.value)}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/\D/g, '');
+                    setTel(formatPhone(raw));
+                  }}
                 />
               </div>
               <div>
@@ -189,7 +228,10 @@ export default function Cadastro() {
                     className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                     placeholder="CNPJ"
                     value={cnpj}
-                    onChange={(e) => setCnpj(e.target.value)}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/\D/g, '');
+                      setCnpj(formatCnpj(raw));
+                    }}
                   />
                 </div>
               )}

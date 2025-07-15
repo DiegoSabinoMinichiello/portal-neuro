@@ -83,10 +83,28 @@ export default function DashboardAdmin() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await axios.post('/api/auth/logout');
+      router.push('/login-usuario');
+    } catch (err) {
+      console.error('Erro ao fazer logout:', err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-primary mb-6">Dashboard Admin - Usuários</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-primary">Dashboard Admin - Usuários</h1>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+        >
+          Sair
+        </button>
+      </div>
+
 
         <div className="mb-4">
           <label className="mr-2 font-semibold">Filtrar por tipo:</label>
@@ -111,7 +129,6 @@ export default function DashboardAdmin() {
                   <th className="border border-gray-300 p-2">ID</th>
                   <th className="border border-gray-300 p-2">Nome</th>
                   <th className="border border-gray-300 p-2">Email</th>
-                  <th className="border border-gray-300 p-2">Senha</th>
                   <th className="border border-gray-300 p-2">Tipo</th>
                   <th className="border border-gray-300 p-2">Telefone</th>
                   <th className="border border-gray-300 p-2">Descrição</th>
@@ -133,7 +150,6 @@ export default function DashboardAdmin() {
                       <td className="border border-gray-300 p-2">{u.id}</td>
                       <td className="border border-gray-300 p-2">{u.nome}</td>
                       <td className="border border-gray-300 p-2">{u.email}</td>
-                      <td className="border border-gray-300 p-2">{u.senha}</td>
                       <td className="border border-gray-300 p-2">{u.tipo}</td>
                       <td className="border border-gray-300 p-2">{u.tel}</td>
                       <td className="border border-gray-300 p-2">{u.desc}</td>
